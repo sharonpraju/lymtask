@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  lymtask_db:
+    image: mongo
+    ports:
+      - $MONGODB_MACHINE_PORT:$MONGODB_PORT
+    volumes:
+      - lymtask-db-volume:/data/db
+  lymtask_server:
+    depends_on:
+      - lymtask_db
+    build: ./app
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NODE_PORT:$NODE_MACHINE_PORT
+    stdin_open: true
+    tty: true
+
+volumes: 
+  lymtask-db-volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/backend/db-volume
